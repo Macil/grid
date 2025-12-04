@@ -1,4 +1,4 @@
-# @macil/grid
+# @macil/grid [![JSR](https://jsr.io/badges/@macil/grid)](https://jsr.io/@macil/grid)
 
 This library contains implementations of discrete 2D grid data structures and
 tools for working with them in TypeScript.
