@@ -54,7 +54,7 @@ export class CharacterGrid extends FixedSizeGrid<string> {
   }
 
   static fromString(input: string): CharacterGrid {
-    const lines = input.trimEnd().split("\n");
+    const lines = input.replace(/\n+$/, "").split("\n");
     const dimensions = new Vector(lines.length, lines[0]?.length ?? 0);
     const allRowsMatchColumnCount = lines.every((line) =>
       line.length === dimensions.columns
@@ -97,7 +97,7 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
   }
 
   static fromString(input: string): ArrayGrid<string> {
-    const lines = input.trimEnd().split("\n");
+    const lines = input.replace(/\n+$/, "").split("\n");
     return ArrayGrid.fromRows(lines.map((line) => Array.from(line)));
   }
 
