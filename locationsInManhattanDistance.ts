@@ -1,13 +1,13 @@
-import { Location } from "./location.ts";
+import { GridLocation } from "./grid-location.ts";
 
 export function* locationsInManhattanDistance(
-  location: Location,
+  location: GridLocation,
   distance: number,
-): Generator<Location> {
+): Generator<GridLocation> {
   for (let dr = -distance; dr <= distance; dr++) {
     const dcAbs = distance - Math.abs(dr);
     for (let dc = -dcAbs; dc <= dcAbs; dc++) {
-      yield new Location(location.row + dr, location.column + dc);
+      yield new GridLocation(location.row + dr, location.column + dc);
     }
   }
 }

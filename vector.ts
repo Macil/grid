@@ -1,11 +1,11 @@
 import { once } from "@alexreardon/limit-once";
 import type { Direction } from "./direction.ts";
 // deno-lint-ignore no-unused-vars
-import type { Location } from "./location.ts";
+import type { GridLocation } from "./grid-location.ts";
 import { Rotation } from "./rotation.ts";
 
 /**
- * A measurement of distance between two {@link Location|Locations}.
+ * A measurement of distance between two {@link GridLocation|GridLocations}.
  *
  * The rows represent vertical distance (positive is down) and the columns
  * represent horizontal distance (positive is right).

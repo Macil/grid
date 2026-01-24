@@ -1,13 +1,13 @@
-import { Location } from "./location.ts";
+import { GridLocation } from "./grid-location.ts";
 import { Vector } from "./vector.ts";
 
 export interface Grid<T> {
-  get(location: Location): T | undefined;
-  valuesWithLocations(): IteratorObject<{ location: Location; value: T }>;
+  get(location: GridLocation): T | undefined;
+  valuesWithLocations(): IteratorObject<{ location: GridLocation; value: T }>;
 }
 
 export interface MutableGrid<T> extends Grid<T> {
-  set(location: Location, value: T): void;
+  set(location: GridLocation, value: T): void;
 }
 
 export abstract class FixedSizeGrid<T> implements Grid<T> {
@@ -17,12 +17,12 @@ export abstract class FixedSizeGrid<T> implements Grid<T> {
     this.dimensions = Object.freeze(dimensions);
   }
 
-  abstract get(location: Location): T | undefined;
+  abstract get(location: GridLocation): T | undefined;
   abstract valuesWithLocations(): IteratorObject<
-    { location: Location; value: T }
+    { location: GridLocation; value: T }
   >;
 
-  isInBounds(location: Location): boolean {
+  isInBounds(location: GridLocation): boolean {
     if (
       Math.trunc(location.row) !== location.row ||
       Math.trunc(location.column) !== location.column
@@ -38,7 +38,7 @@ export abstract class FixedSizeGrid<T> implements Grid<T> {
     return true;
   }
 
-  boundsCheck(location: Location): void {
+  boundsCheck(location: GridLocation): void {
     if (!this.isInBounds(location)) {
       throw new Error(`Location is out of bounds: ${location}`);
     }
@@ -65,7 +65,7 @@ export class CharacterGrid extends FixedSizeGrid<string> {
     return new CharacterGrid(dimensions, lines);
   }
 
-  override get(location: Location): string | undefined {
+  override get(location: GridLocation): string | undefined {
     if (!this.isInBounds(location)) {
       return undefined;
     }
@@ -73,14 +73,14 @@ export class CharacterGrid extends FixedSizeGrid<string> {
   }
 
   override *valuesWithLocations(): Generator<
-    { location: Location; value: string }
+    { location: GridLocation; value: string }
   > {
     for (let rowIndex = 0; rowIndex < this.#lines.length; rowIndex++) {
       const row = this.#lines[rowIndex];
       for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
         const value = row[columnIndex];
         yield {
-          location: new Location(rowIndex, columnIndex),
+          location: new GridLocation(rowIndex, columnIndex),
           value,
         };
       }
@@ -125,7 +125,7 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
     );
   }
 
-  override get(location: Location): T | undefined {
+  override get(location: GridLocation): T | undefined {
     if (!this.isInBounds(location)) {
       return undefined;
     }
@@ -133,13 +133,15 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
       .#values[location.row * this.dimensions.columns + location.column];
   }
 
-  set(location: Location, value: T): void {
+  set(location: GridLocation, value: T): void {
     this.boundsCheck(location);
     this.#values[location.row * this.dimensions.columns + location.column] =
       value;
   }
 
-  override *valuesWithLocations(): Generator<{ location: Location; value: T }> {
+  override *valuesWithLocations(): Generator<
+    { location: GridLocation; value: T }
+  > {
     for (let rowIndex = 0; rowIndex < this.dimensions.rows; rowIndex++) {
       for (
         let columnIndex = 0;
@@ -149,7 +151,7 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
         const value =
           this.#values[rowIndex * this.dimensions.columns + columnIndex];
         yield {
-          location: new Location(rowIndex, columnIndex),
+          location: new GridLocation(rowIndex, columnIndex),
           value,
         };
       }
@@ -159,7 +161,7 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
 
 export function gridToString(grid: FixedSizeGrid<string>): string {
   const parts = [];
-  const location = new Location(0, 0);
+  const location = new GridLocation(0, 0);
   for (location.row = 0; location.row < grid.dimensions.rows; location.row++) {
     for (
       location.column = 0;
