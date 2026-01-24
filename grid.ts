@@ -88,10 +88,14 @@ export class CharacterGrid extends FixedSizeGrid<string> {
   }
 }
 
-export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
-  readonly #values: Array<T>;
+export interface MutableArrayLike<T> extends ArrayLike<T> {
+  [n: number]: T;
+}
 
-  constructor(dimensions: Vector, values: Array<T>) {
+export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
+  readonly #values: MutableArrayLike<T>;
+
+  constructor(dimensions: Vector, values: MutableArrayLike<T>) {
     super(dimensions);
     if (values.length !== dimensions.rows * dimensions.columns) {
       throw new Error("Values array length does not match grid dimensions");
@@ -126,6 +130,16 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
         () => initialValue,
       ),
     );
+  }
+
+  static createUsingTypedArray<T>(
+    dimensions: Vector,
+    typedArrayClass: new (length: number) => MutableArrayLike<T>,
+  ): ArrayGrid<T> {
+    const typedArray = new typedArrayClass(
+      dimensions.rows * dimensions.columns,
+    );
+    return new ArrayGrid(dimensions, typedArray);
   }
 
   override get(location: GridLocation): T | undefined {

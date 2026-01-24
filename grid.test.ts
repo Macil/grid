@@ -36,3 +36,25 @@ Deno.test("ArrayGrid: valuesWithLocations", () => {
     { location: new GridLocation(1, 2), value: "f" },
   ]);
 });
+
+Deno.test("ArrayGrid: TypedArray support", () => {
+  const dimensions = new Vector(3, 4);
+  const grid = ArrayGrid.createUsingTypedArray(dimensions, BigInt64Array);
+
+  let i = 0n;
+  const location = new GridLocation(0, 0);
+  for (location.row = 0; location.row < dimensions.rows; location.row++) {
+    for (
+      location.column = 0;
+      location.column < dimensions.columns;
+      location.column++
+    ) {
+      const value = i++;
+      grid.set(
+        location,
+        value,
+      );
+      assertStrictEquals(grid.get(location), value);
+    }
+  }
+});
