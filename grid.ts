@@ -89,9 +89,9 @@ export class CharacterGrid extends FixedSizeGrid<string> {
 }
 
 export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
-  readonly #values: Array<Array<T>>;
+  readonly #values: Array<T>;
 
-  constructor(dimensions: Vector, values: Array<Array<T>>) {
+  constructor(dimensions: Vector, values: Array<T>) {
     super(dimensions);
     this.#values = values;
   }
@@ -109,7 +109,7 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
     if (!allRowsMatchColumnCount) {
       throw new Error("All rows must have the same length");
     }
-    return new ArrayGrid(dimensions, values);
+    return new ArrayGrid(dimensions, values.flat());
   }
 
   static createWithInitialValue<T>(
@@ -119,8 +119,8 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
     return new ArrayGrid(
       dimensions,
       Array.from(
-        { length: dimensions.rows },
-        () => Array.from({ length: dimensions.columns }, () => initialValue),
+        { length: dimensions.rows * dimensions.columns },
+        () => initialValue,
       ),
     );
   }
@@ -129,19 +129,25 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
     if (!this.isInBounds(location)) {
       return undefined;
     }
-    return this.#values[location.row][location.column];
+    return this
+      .#values[location.row * this.dimensions.columns + location.column];
   }
 
   set(location: Location, value: T): void {
     this.boundsCheck(location);
-    this.#values[location.row][location.column] = value;
+    this.#values[location.row * this.dimensions.columns + location.column] =
+      value;
   }
 
   override *valuesWithLocations(): Generator<{ location: Location; value: T }> {
-    for (let rowIndex = 0; rowIndex < this.#values.length; rowIndex++) {
-      const row = this.#values[rowIndex];
-      for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
-        const value = row[columnIndex];
+    for (let rowIndex = 0; rowIndex < this.dimensions.rows; rowIndex++) {
+      for (
+        let columnIndex = 0;
+        columnIndex < this.dimensions.columns;
+        columnIndex++
+      ) {
+        const value =
+          this.#values[rowIndex * this.dimensions.columns + columnIndex];
         yield {
           location: new Location(rowIndex, columnIndex),
           value,
