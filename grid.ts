@@ -93,6 +93,9 @@ export class ArrayGrid<T> extends FixedSizeGrid<T> implements MutableGrid<T> {
 
   constructor(dimensions: Vector, values: Array<T>) {
     super(dimensions);
+    if (values.length !== dimensions.rows * dimensions.columns) {
+      throw new Error("Values array length does not match grid dimensions");
+    }
     this.#values = values;
   }
 
