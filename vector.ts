@@ -128,21 +128,27 @@ export class Vector {
   }
 }
 
-export const orthogonalNeighbors: () => ReadonlyArray<Vector> = once(() => [
-  Vector.upward(1),
-  Vector.rightward(1),
-  Vector.downward(1),
-  Vector.leftward(1),
-]);
+export const orthogonalNeighbors: () => ReadonlyArray<Vector> = once(() =>
+  Object.freeze([
+    Vector.upward(1),
+    Vector.rightward(1),
+    Vector.downward(1),
+    Vector.leftward(1),
+  ].map((v) => Object.freeze(v)))
+);
 
-export const diagonalNeighbors: () => ReadonlyArray<Vector> = once(() => [
-  Vector.upward(1).add(Vector.rightward(1)),
-  Vector.upward(1).add(Vector.leftward(1)),
-  Vector.downward(1).add(Vector.rightward(1)),
-  Vector.downward(1).add(Vector.leftward(1)),
-]);
+export const diagonalNeighbors: () => ReadonlyArray<Vector> = once(() =>
+  Object.freeze([
+    Vector.upward(1).add(Vector.rightward(1)),
+    Vector.upward(1).add(Vector.leftward(1)),
+    Vector.downward(1).add(Vector.rightward(1)),
+    Vector.downward(1).add(Vector.leftward(1)),
+  ].map((v) => Object.freeze(v)))
+);
 
-export const allNeighbors: () => ReadonlyArray<Vector> = once(() => [
-  ...orthogonalNeighbors(),
-  ...diagonalNeighbors(),
-]);
+export const allNeighbors: () => ReadonlyArray<Vector> = once(() =>
+  Object.freeze([
+    ...orthogonalNeighbors(),
+    ...diagonalNeighbors(),
+  ])
+);
