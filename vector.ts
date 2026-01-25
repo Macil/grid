@@ -86,6 +86,14 @@ export class Vector {
     }
   }
 
+  /**
+   * @returns A vector with the sign of each component according to Math.sign
+   * (-1, 0, or 1).
+   */
+  sign(): Vector {
+    return new Vector(Math.sign(this.rows), Math.sign(this.columns));
+  }
+
   /** Calculates the L1 norm (Manhattan distance) of the vector */
   l1Norm(): number {
     return Math.abs(this.rows) + Math.abs(this.columns);
