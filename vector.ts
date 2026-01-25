@@ -46,6 +46,12 @@ export class Vector {
     return new Vector(this.rows + other.rows, this.columns + other.columns);
   }
 
+  /** Mutates this vector to the sum of itself and another vector. */
+  addInPlace(other: Vector): void {
+    this.rows += other.rows;
+    this.columns += other.columns;
+  }
+
   subtract(other: Vector): Vector {
     return new Vector(this.rows - other.rows, this.columns - other.columns);
   }

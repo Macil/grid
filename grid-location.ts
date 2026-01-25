@@ -17,6 +17,12 @@ export class GridLocation {
     );
   }
 
+  /** Mutates this location to the sum of itself and a vector. */
+  addInPlace(other: Vector): void {
+    this.row += other.rows;
+    this.column += other.columns;
+  }
+
   subtract(location: GridLocation): Vector {
     return new Vector(this.row - location.row, this.column - location.column);
   }
